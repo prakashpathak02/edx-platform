@@ -31,4 +31,4 @@ git+https://github.com/edx-solutions/mobileapps-edx-platform-extensions.git@v1.2
 git+https://github.com/edx-solutions/progress-edx-platform-extensions.git@1.0.8#egg=progress-edx-platform-extensions==1.0.8
 openedx-completion-aggregator==1.0
 # TODO: use new release tag once https://github.com/mckinseyacademy/openedx-user-manager-api/pull/2 merges
-git+https://github.com/open-craft/openedx-user-manager-api@c95a91d011af9ec1af37dcdbf8424e8d301909f1#egg=openedx-user-manager-api==1.0.0
+git+https://github.com/open-craft/openedx-user-manager-api@MCKIN-8112-fix-url-namespace#egg=openedx-user-manager-api==1.0.0
