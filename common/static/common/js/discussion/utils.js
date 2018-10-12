@@ -1,4 +1,4 @@
-/* globals $$course_id, $$roles, Content, Markdown, MathJax, URI */
+/* globals _, $$course_id, $$roles, Content, Markdown, MathJax, URI */
 (function() {
     'use strict';
     this.DiscussionUtil = (function() {
