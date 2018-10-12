@@ -29,7 +29,7 @@
                 userId = this.user ? this.user.id : void 0;
             }
             if (_.isUndefined(this.roleIds)) {
-                this.loadRoles($$roles)
+                this.loadRoles($$roles);
             }
             staff = _.union(this.roleIds.Moderator, this.roleIds.Administrator);
             return _.include(staff, parseInt(userId));
@@ -41,7 +41,7 @@
                 userId = this.user ? this.user.id : void 0;
             }
             if (_.isUndefined(this.roleIds)) {
-                this.loadRoles($$roles)
+                this.loadRoles($$roles);
             }
             ta = _.union(this.roleIds['Community TA']);
             return _.include(ta, parseInt(userId));
