@@ -180,9 +180,9 @@ class CommentClientError(Exception):
 
 
 class CommentClientRequestError(CommentClientError):
-    def __init__(self, msg, status_code=400):
+    def __init__(self, msg, status_codes=400):
         super(CommentClientRequestError, self).__init__(msg)
-        self.status_code = status_code
+        self.status_code = status_codes
 
 
 class CommentClient500Error(CommentClientError):
