@@ -113,21 +113,21 @@ def perform_request(method, url, data_or_params=None, raw=False,
     if 200 < response.status_code < 500:
         log.error(u"Comment Client Request Error on url={url} with error message='{text}' and "
                   u"status_code={status_code}".format(
-                url=url,
-                status_code=response.status_code,
-                text=response.text
-            )
-        )
+                    url=url,
+                    status_code=response.status_code,
+                    text=response.text
+                    )
+                  )
         raise CommentClientRequestError(response.text, response.status_code)
     # Heroku returns a 503 when an application is in maintenance mode
     elif response.status_code == 503:
         log.error(u"Comment Client Maintenance Error on url={url} with error message='{text}' and "
                   u"status_code={status_code}".format(
-                     url=url,
-                     status_code=response.status_code,
-                     text=response.text
-            )
-        )
+                    url=url,
+                    status_code=response.status_code,
+                    text=response.text
+                    )
+                  )
         raise CommentClientMaintenanceError(response.text, response.status_code)
     elif response.status_code == 500:
         log.error(
