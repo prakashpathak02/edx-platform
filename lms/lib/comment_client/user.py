@@ -1,5 +1,6 @@
 """ User model wrapper for comment service"""
-import settings, logging
+import settings
+import logging
 
 import models
 
@@ -175,8 +176,8 @@ class User(models.Model):
                 )
             else:
                 log.error(
-                    u"Comment Client Error on retrieving information. Request url={url}, error message='{text}', and "
-                    u"status_code={status_code}".format(
+                    u"Comment Client Error on retrieving information. Request url={url}, error message='{text}', and"
+                    u" status_code={status_code}".format(
                         url=url,
                         status_code=e.status_code,
                         text=e.message

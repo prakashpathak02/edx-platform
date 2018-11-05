@@ -101,6 +101,15 @@ def perform_request(method, url, data_or_params=None, raw=False,
 
     dog_stats_api.increment('comment_client.request.count', tags=metric_tags)
 
+    log.info(
+        u"comment_client_response_log: url={url}, response text='{text}', "
+        u"status_code={status_code}".format(
+            url=url,
+            status_code=response.status_code,
+            text=response.text
+        )
+    )
+
     if 200 < response.status_code < 500:
         log.error(u"Comment Client Request Error on url={url} with error message='{text}' and "
                   u"status_code={status_code}".format(
@@ -130,19 +139,6 @@ def perform_request(method, url, data_or_params=None, raw=False,
             )
         )
         raise CommentClient500Error("Internal Server Error: {}".format(response.text), response.status_code)
-    elif response.status_code > 500:
-        log.error(
-            u"Comment Client Error on url={url} with error message='{text}' and "
-            u"status_code={status_code}".format(
-                url=url,
-                status_code=response.status_code,
-                text=response.text
-            )
-        )
-        raise CommentClientError(u"Comment Client Error with status_code: {status_code}".format(
-                status_code=response.status_code
-            )
-        )
     else:
         if raw:
             return response.text
