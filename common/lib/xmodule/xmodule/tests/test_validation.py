@@ -4,6 +4,8 @@ Test xblock/validation.py
 
 import unittest
 
+from nose.tools import assert_raises
+
 from xmodule.validation import StudioValidationMessage, StudioValidation
 from xblock.validation import Validation, ValidationMessage
 
