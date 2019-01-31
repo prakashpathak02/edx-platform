@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from django.core.validators import validate_email, ValidationError
 from django.http import HttpResponseForbidden
+from openedx.core.djangoapps.profile_images.tasks import delete_profile_images
 from openedx.core.djangoapps.user_api.preferences.api import update_user_preferences
 from openedx.core.djangoapps.user_api.errors import PreferenceValidationError
 
@@ -533,3 +534,34 @@ def _validate_email(email):
         raise AccountEmailInvalid(
             u"Email '{email}' format is not valid".format(email=email)
         )
+
+
+@intercept_errors(UserAPIInternalError, ignore_errors=[UserAPIRequestError])
+@transaction.atomic
+def delete_user(user):
+    """
+    Delete a user and any related records.
+
+    Related records include the following:
+    1. models with a ForeignKey relationship to User (with on_delete=CASCADE)
+    2. models with indirect relationship to User (i.e. through another model, or with on_delete other than CASCADE)
+    3. files belonging to the user
+
+    Arguments:
+        user: The User object
+
+    Returns:
+        None
+
+    Raises:
+        UserAPIInternalError
+    """
+    # delete profile images
+    delete_profile_images.delay([user.username])
+
+    # TODO: delete assignments
+
+    # TODO: delete XBlock & Bookmarks records (see BB-785)
+
+    # finally, delete the user along with any models related via ForeignKey with on_delete=CASCADE
+    user.delete()

@@ -25,7 +25,8 @@ from ...errors import (
     AccountUserAlreadyExists, AccountUsernameInvalid, AccountEmailInvalid, AccountPasswordInvalid, AccountRequestError
 )
 from ..api import (
-    get_account_settings, update_account_settings, create_account, activate_account, request_password_change
+    get_account_settings, update_account_settings, create_account, activate_account, request_password_change,
+    delete_user
 )
 from .. import USERNAME_MAX_LENGTH, EMAIL_MAX_LENGTH, PASSWORD_MAX_LENGTH, PRIVATE_VISIBILITY
 
@@ -490,3 +491,25 @@ class AccountCreationUnicodeUsernameTest(TestCase):
                 self.fail(u'The API should accept Unicode username `{unicode_username}`.'.format(
                     unicode_username=unicode_username,
                 ))
+
+
+@attr(shard=2)
+@ddt.ddt
+class UserDeletionTest(TestCase):
+    """
+    Test cases for deleting a user
+    """
+
+    @skip_unless_lms
+    @patch('openedx.core.djangoapps.user_api.accounts.api.delete_profile_images')
+    def test_delete_user(self, mock_delete_profile_images):
+        user = UserFactory.create(password='secret')
+
+        # Delete the user
+        delete_user(user)
+
+        # Verify that the delete_profile_images task is called
+        mock_delete_profile_images.delay.assert_called_with([user.username])
+
+        # Verify that the uesr has been deleted
+        self.assertIsNone(User.objects.filter(id=user.id).first())
