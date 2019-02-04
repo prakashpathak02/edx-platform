@@ -12,6 +12,7 @@ from django.http import HttpResponseForbidden
 from openedx.core.djangoapps.profile_images.tasks import delete_profile_images
 from openedx.core.djangoapps.user_api.preferences.api import update_user_preferences
 from openedx.core.djangoapps.user_api.errors import PreferenceValidationError
+from openedx.core.djangoapps.user_api.accounts.tasks import delete_staff_graded_assignment_files
 
 from student.models import User, UserProfile, Registration
 from student import forms as student_forms
@@ -559,9 +560,8 @@ def delete_user(user):
     # delete profile images
     delete_profile_images.delay([user.username])
 
-    # TODO: delete assignments
-
-    # TODO: delete XBlock & Bookmarks records (see BB-785)
+    # delete staff graded assignments
+    delete_staff_graded_assignment_files.delay([user.id])
 
     # finally, delete the user along with any models related via ForeignKey with on_delete=CASCADE
     user.delete()
