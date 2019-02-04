@@ -501,9 +501,11 @@ class UserDeletionTest(TestCase):
     """
 
     @skip_unless_lms
+    @patch('openedx.core.djangoapps.user_api.accounts.api.delete_staff_graded_assignment_files')
     @patch('openedx.core.djangoapps.user_api.accounts.api.delete_profile_images')
-    def test_delete_user(self, mock_delete_profile_images):
-        user = UserFactory.create(password='secret')
+    def test_delete_user(self, mock_delete_profile_images, mock_delete_staff_graded_assignment_files):
+        user = UserFactory.create(username='test', email='test@example.com', password='secret')
+        user_id = user.id
 
         # Delete the user
         delete_user(user)
@@ -511,5 +513,8 @@ class UserDeletionTest(TestCase):
         # Verify that the delete_profile_images task is called
         mock_delete_profile_images.delay.assert_called_with([user.username])
 
-        # Verify that the uesr has been deleted
-        self.assertIsNone(User.objects.filter(id=user.id).first())
+        # Verify that the delete_staff_graded_assignment_files task is called
+        mock_delete_staff_graded_assignment_files.delay.assert_called_with([user_id])
+
+        # Verify that the user has been deleted
+        self.assertIsNone(User.objects.filter(username=user.username).first())
