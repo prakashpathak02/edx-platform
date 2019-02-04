@@ -1366,7 +1366,7 @@ class CourseEnrollmentsApiListTest(APITestCase, ModuleStoreTestCase):
         ({'username': '1*2'}, ['username', ]),
         ({'username': '1*2', 'course_id': 'org.0/course_0/Run_0'}, ['username', ]),
         ({'username': '1*2', 'course_id': '1'}, ['username', 'course_id']),
-        ({'username': ','.join(str(x) for x in range(101))}, ['username', ])
+        ({'username': ','.join(str(x) for x in range(201))}, ['username', ])
     )
     @ddt.unpack
     def test_query_string_parameters_invalid_errors(self, query_params, error_fields):
