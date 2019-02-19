@@ -18,6 +18,7 @@ from student import forms as student_forms
 from student import views as student_views
 from util.model_utils import emit_setting_changed_event
 from lms.lib.comment_client.user import User as CCUser
+from lms.lib.comment_client.utils import CommentClientRequestError
 
 from openedx.core.lib.api.view_utils import add_serializer_errors
 
@@ -560,8 +561,13 @@ def delete_user(user):
     # delete profile images
     delete_profile_images.delay([user.username])
 
-    # retire user discussion comments
-    CCUser.from_django_user(user).retire('Deleted username')
+    try:
+        # retire user discussion comments
+        CCUser.from_django_user(user).retire('Deleted username')
+    except CommentClientRequestError as e:
+        # Proceed if discussion user does not exist
+        if e.message != u'{"message":"User not found."}':
+            raise
 
     # finally, delete the user along with any models related via ForeignKey with on_delete=CASCADE
     user.delete()
