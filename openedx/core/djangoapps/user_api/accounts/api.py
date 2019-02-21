@@ -546,7 +546,7 @@ def retire_user_comments(user):
         CCUser.from_django_user(user).retire('Deleted user')
     except CommentClientRequestError as e:
         # Ignore error if discussion user does not exist
-        if e.message != u'{"message": "User not found."}':
+        if e.status_code != 404:
             raise
 
 
