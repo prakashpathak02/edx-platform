@@ -538,19 +538,30 @@ def _validate_email(email):
         )
 
 
-@intercept_errors(UserAPIInternalError, ignore_errors=[UserAPIRequestError])
-@transaction.atomic
-def delete_user(user):
+def retire_user_comments(user):
     """
-    Delete a user and any related records.
+    Retire the user's discussion comments
+    """
+    try:
+        CCUser.from_django_user(user).retire('Deleted user')
+    except CommentClientRequestError as e:
+        # Ignore error if discussion user does not exist
+        if e.message != u'{"message": "User not found."}':
+            raise
+
+
+@intercept_errors(UserAPIInternalError, ignore_errors=[UserAPIRequestError])
+def delete_users(users):
+    """
+    Delete the users and their data in related records.
 
     Related records include the following:
-    1. models with a ForeignKey relationship to User (with on_delete=CASCADE)
+    1. models with a ForeignKey relationship to User (with on_delete=CASCADE).
     2. models with indirect relationship to User (i.e. through another model, or with on_delete other than CASCADE)
-    3. files belonging to the user
+    3. files belonging to the user.
 
     Arguments:
-        user: The User object
+        users: An iterable of 'User' objects.
 
     Returns:
         None
@@ -558,16 +569,9 @@ def delete_user(user):
     Raises:
         UserAPIInternalError
     """
-    # delete profile images
-    delete_profile_images.delay([user.username])
+    for user in users:
+        retire_user_comments(user)
 
-    try:
-        # retire user discussion comments
-        CCUser.from_django_user(user).retire('Deleted username')
-    except CommentClientRequestError as e:
-        # Proceed if discussion user does not exist
-        if e.message != u'{"message":"User not found."}':
-            raise
+    delete_profile_images.delay(users)
 
-    # finally, delete the user along with any models related via ForeignKey with on_delete=CASCADE
-    user.delete()
+    users.delete()
