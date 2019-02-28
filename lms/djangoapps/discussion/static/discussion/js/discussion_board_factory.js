@@ -38,6 +38,7 @@
                 window.$$roles = options.roles;
                 DiscussionUtil.setUser(user);
                 window.user = user;
+                window.retiredUsername = options.retiredUsername;
                 Content.loadContentInfos(contentInfo);
 
                 // Create a discussion model

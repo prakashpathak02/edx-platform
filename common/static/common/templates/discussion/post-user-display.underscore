@@ -1,4 +1,6 @@
-<% if (username) { %>
+<% if (username && username == retiredUsername) { %>
+    <%- username %>
+<% } else if(username) { %>
 <a href="<%- user_url %>" class="username"><%- username %></a>
     <% if (is_community_ta) { %>
     <span class="user-label-community-ta"><%- gettext("(Community TA)") %></span>

@@ -42,6 +42,7 @@ from openedx.core.djangoapps.site_configuration import helpers as configuration_
 
 
 # Public access point for this function.
+RETIRED_USERNAME = 'Deleted user'
 visible_fields = _visible_fields
 
 
@@ -543,7 +544,7 @@ def retire_user_comments(user):
     Retire the user's discussion comments
     """
     try:
-        CCUser.from_django_user(user).retire('Deleted user')
+        CCUser.from_django_user(user).retire(RETIRED_USERNAME)
     except CommentClientRequestError as e:
         # Ignore error if discussion user does not exist
         if e.status_code != 404:

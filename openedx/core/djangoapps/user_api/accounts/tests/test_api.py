@@ -26,8 +26,8 @@ from ...errors import (
 )
 from ..api import (
     get_account_settings, update_account_settings, create_account, activate_account, request_password_change,
-    delete_users
-)
+    delete_users,
+    RETIRED_USERNAME)
 from .. import USERNAME_MAX_LENGTH, EMAIL_MAX_LENGTH, PASSWORD_MAX_LENGTH, PRIVATE_VISIBILITY
 
 
@@ -516,9 +516,9 @@ class UserDeletionTest(TestCase):
         # Verify that the comments of the users are retired
         mock_ccuser.from_django_user.assert_has_calls([
             call(user1),
-            call().retire('Deleted user'),
+            call().retire(RETIRED_USERNAME),
             call(user2),
-            call().retire('Deleted user'),
+            call().retire(RETIRED_USERNAME),
         ])
 
         # Verify that the delete_profile_images task is called

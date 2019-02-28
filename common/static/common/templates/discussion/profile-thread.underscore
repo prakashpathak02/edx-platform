@@ -3,7 +3,9 @@
         <header>
             <h3><%- title %></h3>
             <p class="posted-details">
-                <% if (user) { %>
+                <% if (user && user == retiredUsername) { %>
+                    <%- user.username %>
+                <% } else if(user) %>
                     <a href="<%- user.url %>" class="username"><%- user.username %></a>
                 <% } else { %>
                     <%- gettext("anonymous") %>

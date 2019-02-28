@@ -53,6 +53,7 @@ from openedx.core.djangoapps.course_groups.cohorts import (
 )
 from openedx.core.djangoapps.course_groups.models import CourseUserGroup
 from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
+from openedx.core.djangoapps.user_api.accounts.api import RETIRED_USERNAME
 
 log = logging.getLogger("edx.discussions")
 try:
@@ -485,6 +486,7 @@ def _create_discussion_board_context(request, course_key, discussion_id=None, th
         'upgrade_link': check_and_get_upgrade_link(request, user, course.id),
         'upgrade_price': get_cosmetic_verified_display_price(course),
         # ENDTODO
+        'retired_username': RETIRED_USERNAME,
     })
     return context
 
