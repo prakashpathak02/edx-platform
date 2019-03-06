@@ -69,7 +69,6 @@ from openedx.core.lib.xblock_utils import (
     replace_static_urls,
     wrap_xblock
 )
-from progress.models import CourseModuleCompletion
 from student.models import anonymous_id_for_user, user_by_anonymous_id
 from student.roles import CourseBetaTesterRole
 from track import contexts
@@ -538,11 +537,6 @@ def get_module_system_for_user(
             only_if_higher=event.get('only_if_higher'),
         )
 
-        # we can treat a grading event as a indication that a user
-        # "completed" an xBlock
-        if settings.FEATURES.get('MARK_PROGRESS_ON_GRADING_EVENT', False):
-            handle_deprecated_progress_event(block, event)
-
     def handle_completion_event(block, event):
         """
         Submit a completion object for the block.
@@ -561,11 +555,6 @@ def get_module_system_for_user(
             course_key=course_id,
             block_key=block.scope_ids.usage_id,
             completion=event['completion'],
-        )
-        CourseModuleCompletion.objects.get_or_create(
-            user_id=user.id,
-            course_id=course_id,
-            content_id=unicode(block.scope_ids.usage_id),
         )
 
     def handle_deprecated_progress_event(block, event):
@@ -588,11 +577,6 @@ def get_module_system_for_user(
         if not user_id:
             return
 
-        CourseModuleCompletion.objects.get_or_create(
-            user_id=user_id,
-            course_id=course_id,
-            content_id=unicode(descriptor.location)
-        )
         if completion_waffle.waffle().is_enabled(completion_waffle.ENABLE_COMPLETION_TRACKING):
             if user_id != user.id:
                 log.warning("{} tried to submit a completion on behalf of {}".format(user, user_id))

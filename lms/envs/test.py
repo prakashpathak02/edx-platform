@@ -603,7 +603,7 @@ INSTALLED_APPS += (
     'edx_solutions_api_integration',
     'social_engagement',
     'gradebook',
-    'progress',
+    'progress',  # DEPRECATED: remove eventually
     'edx_solutions_projects',
     'edx_solutions_organizations',
     'mobileapps',
